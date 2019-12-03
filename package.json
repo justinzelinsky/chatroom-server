@@ -1,0 +1,47 @@
+{
+  "name": "chatroom-server",
+  "version": "1.0.0",
+  "description": "Server for a Chatroom, written using Socket.IO and Mongo",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_PATH=src/ node src/index.js",
+    "test": "jest",
+    "watch": "NODE_PATH=src/ nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justinzelinsky/chatroom-server.git"
+  },
+  "keywords": [],
+  "author": "Justin Zelinsky",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "connect-mongo": "^3.1.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^2.2.0",
+    "mongoose": "^5.7.12",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
+    "eslint-plugin-jest": "^23.0.3",
+    "fetch-mock": "^8.0.0",
+    "jest": "^24.9.0",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.1"
+  },
+  "bugs": {
+    "url": "https://github.com/justinzelinsky/chatroom-server/issues"
+  },
+  "homepage": "https://github.com/justinzelinsky/chatroom-server#readme"
+}
