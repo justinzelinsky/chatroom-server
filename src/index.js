@@ -38,7 +38,6 @@ const mongooseConnection = mongoose.connection;
 configurePassport(passport);
 
 // Setup Express
-app.use(express.static('dist'));
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -58,9 +57,5 @@ app.use(
 app.use(passport.initialize());
 app.use('/api/users', users);
 app.use('/api/messages', messages);
-
-app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname + '../../../dist/index.html'));
-});
 
 httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`)); // eslint-disable-line
