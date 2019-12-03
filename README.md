@@ -21,6 +21,8 @@ This is my pet project which allows me to test my knowledge of JavaScript and We
 
 `npm start`
 
+The server will be running on `localhost:8083`. You will need the UI codebase to use the server. You can check out that codebase [here](https://github.com/justinzelinsky/chatroom-ui).
+
 ## Special Thanks
 
 Many thanks to Rishi Prasad for his phenomenal [tutorial](https://blog.bitsrc.io/build-a-login-auth-app-with-mern-stack-part-1-c405048e3669) on building an authentication app.
