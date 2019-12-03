@@ -1,4 +1,4 @@
-import validateRegisterInput from 'validation/register';
+const validateRegisterInput = require('validation/register');
 
 describe('validateRegisterInput test', () => {
   it('should return not errors when using a valid name, email and password', () => {

@@ -58,4 +58,4 @@ app.use(passport.initialize());
 app.use('/api/users', users);
 app.use('/api/messages', messages);
 
-httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`)); // eslint-disable-line
+httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

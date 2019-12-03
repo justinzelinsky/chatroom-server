@@ -1,4 +1,4 @@
-import { isEmpty } from 'utils';
+const { isEmpty } = require('utils');
 
 describe('isEmpty function', () => {
   it('should correctly determine empty objects', () => {

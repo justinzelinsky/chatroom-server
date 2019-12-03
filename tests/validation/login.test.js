@@ -1,4 +1,4 @@
-import validateLoginInput from 'validation/login';
+const validateLoginInput = require('validation/login');
 
 describe('validateLoginInput test', () => {
   it('should return not errors when using a valid email and password', () => {

@@ -29,11 +29,6 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
-    "@babel/preset-react": "^7.7.4",
-    "babel-eslint": "^10.0.3",
-    "babel-jest": "^24.9.0",
     "eslint-plugin-jest": "^23.0.3",
     "fetch-mock": "^8.0.0",
     "jest": "^24.9.0",

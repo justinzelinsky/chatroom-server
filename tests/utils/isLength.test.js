@@ -1,4 +1,4 @@
-import { isLength } from 'utils';
+const { isLength } = require('utils');
 
 describe('isLength function', () => {
   it('should correctly determine if strings have valid lengths', () => {

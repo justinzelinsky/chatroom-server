@@ -1,4 +1,4 @@
-import { isEmail } from 'utils';
+const { isEmail } = require('utils');
 
 describe('isEmail function', () => {
   it('should correctly determine valid emails', () => {
