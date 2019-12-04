@@ -153,7 +153,7 @@ router.get('/logout', (req, res, next) => {
       if (err) {
         return next(err);
       } else {
-        return res.redirect(200, '/');
+        return res.json({ logout: true });
       }
     });
   }
