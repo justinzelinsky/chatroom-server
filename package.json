@@ -4,6 +4,7 @@
   "description": "Server for a Chatroom, written using Socket.IO and Mongo",
   "main": "index.js",
   "scripts": {
+    "docker": "docker-compose up",
     "start": "NODE_PATH=src/ node src/index.js",
     "test": "jest",
     "watch": "NODE_PATH=src/ nodemon src/index.js"

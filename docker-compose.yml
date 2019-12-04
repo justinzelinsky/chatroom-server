@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  web:
+  chatroom-server:
     build: .
     environment:
       - MONGO_DB=mongodb://mongo:27017/my-db
@@ -10,7 +10,7 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 8082:8082
+      - 8083:8083
   mongo:
     image: mongo
     ports:

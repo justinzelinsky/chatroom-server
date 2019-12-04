@@ -1,4 +1,4 @@
-FROM node:11.2
+FROM node:12.3.0
 
 WORKDIR /usr/src/app
 
@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "npm", "run", "start:prod"]
+CMD [ "npm", "start"]
