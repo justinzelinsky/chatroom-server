@@ -37,6 +37,11 @@ const mongooseConnection = mongoose.connection;
 
 configurePassport(passport);
 
+const loggingMiddleware = (req, res, next) => {
+  console.log(`[${new Date().toLocaleString()}]: Requesting ${req.path}`);
+  next();
+};
+
 // Setup Express
 app.use(
   bodyParser.urlencoded({
@@ -55,6 +60,9 @@ app.use(
   })
 );
 app.use(passport.initialize());
+if (process.env.DEV) {
+  app.use(loggingMiddleware);
+}
 app.use('/api/users', users);
 app.use('/api/messages', messages);
 

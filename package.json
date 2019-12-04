@@ -7,7 +7,7 @@
     "docker": "docker-compose up",
     "start": "NODE_PATH=src/ node src/index.js",
     "test": "jest",
-    "watch": "NODE_PATH=src/ nodemon src/index.js"
+    "watch": "DEV=true NODE_PATH=src/ nodemon src/index.js"
   },
   "repository": {
     "type": "git",
