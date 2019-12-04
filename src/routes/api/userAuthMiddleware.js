@@ -5,6 +5,10 @@ const { User } = require('models');
 
 const userAuthMiddleware = (req, res, next) => {
   const authorizationHeader = req.header('Authorization');
+  if (!authorizationHeader) {
+    console.error('No authorization header found.');
+    return res.sendStatus(401);
+  }
   const token = authorizationHeader.split(' ')[1];
 
   jwt.verify(token, keys.secretOrKey, (err, decoded) => {
