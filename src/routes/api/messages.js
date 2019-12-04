@@ -13,7 +13,7 @@ router.get('/', userAuthMiddleware, (req, res) => {
 router.post('/clear', userAuthMiddleware, adminAuthMiddleware, (req, res) => {
   Message.deleteMany({}, err => {
     if (err) {
-      res.status(500).send(err);
+      return res.status(500).send(err);
     }
     res.sendStatus(200);
   });

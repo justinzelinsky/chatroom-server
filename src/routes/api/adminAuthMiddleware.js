@@ -15,9 +15,9 @@ const adminAuthMiddleware = (req, res, next) => {
 
     if (user.admin) {
       next();
+    } else {
+      return res.sendStatus(401);
     }
-
-    return res.sendStatus(401);
   });
 };
 
