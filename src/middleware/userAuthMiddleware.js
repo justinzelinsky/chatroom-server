@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-const keys = require('config/keys');
 const { User } = require('models');
 
 const userAuthMiddleware = (req, res, next) => {
@@ -11,7 +10,7 @@ const userAuthMiddleware = (req, res, next) => {
   }
   const token = authorizationHeader.split(' ')[1];
 
-  jwt.verify(token, keys.secretOrKey, (err, decoded) => {
+  jwt.verify(token, process.env.CHATROOM_SECRET, (err, decoded) => {
     if (err) {
       console.error(`Invalid authorization header: ${token}`);
       return res.sendStatus(401);

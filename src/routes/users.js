@@ -2,9 +2,8 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
-const keys = require('config/keys');
+const userAuthMiddleware = require('middleware/userAuthMiddleware');
 const { User } = require('models');
-const userAuthMiddleware = require('./userAuthMiddleware');
 const {
   validateLoginInput,
   validateRegisterInput,
@@ -53,7 +52,7 @@ router.post('/update', userAuthMiddleware, (req, res) => {
 
       jwt.sign(
         payload,
-        keys.secretOrKey,
+        process.env.CHATROOM_SECRET,
         {
           expiresIn: 31556926
         },
@@ -129,7 +128,7 @@ router.post('/login', (req, res) => {
 
         jwt.sign(
           payload,
-          keys.secretOrKey,
+          process.env.CHATROOM_SECRET,
           {
             expiresIn: 31556926
           },

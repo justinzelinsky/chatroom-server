@@ -7,12 +7,12 @@ const expressSession = require('express-session');
 const http = require('http');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const { ExtractJwt, Strategy } = require('passport-jwt');
 const path = require('path');
 const socketIO = require('socket.io');
 
-const config = require('config/keys');
-const configurePassport = require('config/configurePassport');
-const { messages, users } = require('routes/api');
+const { loggerMiddleware } = require('middleware');
+const { messages, users } = require('routes');
 const initializeWebsocketServer = require('websocket');
 
 const PORT = process.env.PORT || 8083;
@@ -20,13 +20,11 @@ const app = express();
 const httpServer = http.Server(app);
 const MongoStore = connectMongo(expressSession);
 
-// Setup Websocket Server
 const io = socketIO(httpServer);
 initializeWebsocketServer(io);
 
-// Setup MongoDB
 mongoose
-  .connect(config.mongoURI, {
+  .connect(process.env.MONGO_DB, {
     useFindAndModify: false,
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -35,14 +33,22 @@ mongoose
   .catch(err => console.log(err)); // eslint-disable-line
 const mongooseConnection = mongoose.connection;
 
-configurePassport(passport);
-
-const loggingMiddleware = (req, res, next) => {
-  console.log(`[${new Date().toLocaleString()}]: Requesting ${req.path}`);
-  next();
+const User = mongoose.model('users');
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.CHATROOM_SECRET
 };
+passport.use(
+  new Strategy(opts, (jwt_payload, done) => {
+    User.findById(jwt_payload.id)
+      .then(user => done(null, user || false))
+      .catch(err => console.log(err)); // eslint-disable-line
+  })
+);
 
-// Setup Express
+if (process.env.DEV) {
+  app.use(loggerMiddleware);
+}
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -60,9 +66,6 @@ app.use(
   })
 );
 app.use(passport.initialize());
-if (process.env.DEV) {
-  app.use(loggingMiddleware);
-}
 app.use('/api/users', users);
 app.use('/api/messages', messages);
 

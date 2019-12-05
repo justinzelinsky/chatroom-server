@@ -1,8 +1,8 @@
 const express = require('express');
 
 const { Message } = require('models');
-const adminAuthMiddleware = require('./adminAuthMiddleware');
-const userAuthMiddleware = require('./userAuthMiddleware');
+const adminAuthMiddleware = require('middleware/adminAuthMiddleware');
+const userAuthMiddleware = require('middleware/userAuthMiddleware');
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.post('/clear', userAuthMiddleware, adminAuthMiddleware, (req, res) => {
     if (err) {
       return res.status(500).send(err);
     }
-    res.sendStatus(200);
+    res.status(200).json({ deleted: true });
   });
 });
 
