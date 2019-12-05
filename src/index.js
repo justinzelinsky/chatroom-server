@@ -1,7 +1,7 @@
 'use strict';
 
-const connectMongo = require('connect-mongo');
 const bodyParser = require('body-parser');
+const connectMongo = require('connect-mongo');
 const express = require('express');
 const expressSession = require('express-session');
 const http = require('http');
