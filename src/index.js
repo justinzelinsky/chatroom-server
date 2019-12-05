@@ -29,8 +29,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('MongoDB successfully connected')) // eslint-disable-line
-  .catch(err => console.log(err)); // eslint-disable-line
+  .then(() => console.log('MongoDB successfully connected'))
+  .catch(err => console.log(err));
 const mongooseConnection = mongoose.connection;
 
 const User = mongoose.model('users');
@@ -42,7 +42,7 @@ passport.use(
   new Strategy(opts, (jwt_payload, done) => {
     User.findById(jwt_payload.id)
       .then(user => done(null, user || false))
-      .catch(err => console.log(err)); // eslint-disable-line
+      .catch(err => console.log(err));
   })
 );
 
