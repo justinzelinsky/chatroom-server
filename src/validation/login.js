@@ -1,22 +1,17 @@
-const { isEmpty, isEmail } = require('utils');
+const { isEmail } = require('utils');
 
 const validateLoginInput = ({ email = '', password = '' }) => {
-  const errors = {};
+  let error = '';
 
   if (!email) {
-    errors.email = 'Email field is required';
+    error = 'Email field is required';
   } else if (!isEmail(email)) {
-    errors.email = 'Email is invalid';
+    error = 'Email is invalid';
+  } else if (!password) {
+    error = 'Password field is required';
   }
 
-  if (!password) {
-    errors.password = 'Password field is required';
-  }
-
-  return {
-    errors,
-    isValid: isEmpty(errors)
-  };
+  return { error, isValid: error === '' };
 };
 
 module.exports = validateLoginInput;

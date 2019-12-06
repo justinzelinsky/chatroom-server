@@ -24,10 +24,10 @@ router.get('/', userAuthMiddleware, (req, res) => {
 });
 
 router.post('/update', userAuthMiddleware, (req, res) => {
-  const { errors, isValid } = validateUpdateInput(req.body);
+  const { error, isValid } = validateUpdateInput(req.body);
 
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({ error });
   }
 
   const { email, name } = req.body;
@@ -71,17 +71,17 @@ router.post('/update', userAuthMiddleware, (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-  const { errors, isValid } = validateRegisterInput(req.body);
+  const { error, isValid } = validateRegisterInput(req.body);
 
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({ error });
   }
 
   const { name, email, password } = req.body;
 
   User.findOne({ email }).then(user => {
     if (user) {
-      return res.status(400).json({ email: 'Email already exists' });
+      return res.status(400).json({ error: 'Email already exists' });
     }
 
     const newUser = new User({
@@ -97,22 +97,22 @@ router.post('/register', (req, res) => {
         newUser
           .save()
           .then(user => res.json(user))
-          .catch(err => console.log(err));
+          .catch(err => res.sendStatus(500));
       });
     });
   });
 });
 
 router.post('/login', (req, res) => {
-  const { errors, isValid } = validateLoginInput(req.body);
+  const { error, isValid } = validateLoginInput(req.body);
   if (!isValid) {
-    return res.status(400).json(errors);
+    return res.status(400).json({ error });
   }
   const { email, password } = req.body;
 
   User.findOne({ email }).then(user => {
     if (!user) {
-      return res.status(404).json({ email: 'Email not found' });
+      return res.status(404).json({ error: 'Email not found' });
     }
 
     bcrypt.compare(password, user.password).then(isMatch => {
@@ -133,6 +133,9 @@ router.post('/login', (req, res) => {
             expiresIn: 31556926
           },
           (err, token) => {
+            if (err) {
+              return res.sendStatus(500);
+            }
             res.json({
               success: true,
               token: `Bearer ${token}`
@@ -140,7 +143,7 @@ router.post('/login', (req, res) => {
           }
         );
       } else {
-        return res.status(400).json({ password: 'Password incorrect' });
+        return res.status(400).json({ error: 'Password incorrect' });
       }
     });
   });
@@ -151,9 +154,8 @@ router.get('/logout', (req, res, next) => {
     req.session.destroy(function(err) {
       if (err) {
         return next(err);
-      } else {
-        return res.json({ logout: true });
       }
+      res.json({ logout: true });
     });
   }
 });

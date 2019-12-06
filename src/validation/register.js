@@ -1,4 +1,4 @@
-const { isEmail, isEmpty, isLength } = require('utils');
+const { isEmail, isLength } = require('utils');
 
 const validateRegisterInput = ({
   name = '',
@@ -6,33 +6,27 @@ const validateRegisterInput = ({
   password = '',
   passwordConfirmation = ''
 }) => {
-  const errors = {};
+  let error = '';
 
   if (!name) {
-    errors.name = 'Name field is required';
-  }
-
-  if (!email) {
-    errors.email = 'Email field is required';
+    error = 'Name field is required';
+  } else if (!email) {
+    error = 'Email field is required';
   } else if (!isEmail(email)) {
-    errors.email = 'Email is invalid';
-  }
-
-  if (!password) {
-    errors.password = 'Password field is required';
+    error = 'Email is invalid';
+  } else if (!password) {
+    error = 'Password field is required';
   } else if (!isLength(password, { min: 6, max: 30 })) {
-    errors.password = 'Password must be between 6 and 30 characters';
-  }
-
-  if (!passwordConfirmation) {
-    errors.passwordConfirmation = 'Confirm password field is required';
+    error = 'Password must be between 6 and 30 characters';
+  } else if (!passwordConfirmation) {
+    error = 'Confirm password field is required';
   } else if (password !== passwordConfirmation) {
-    errors.passwordConfirmation = 'Passwords must match';
+    error = 'Passwords must match';
   }
 
   return {
-    errors,
-    isValid: isEmpty(errors)
+    error,
+    isValid: error === ''
   };
 };
 

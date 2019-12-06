@@ -1,21 +1,19 @@
-const { isEmpty, isEmail } = require('utils');
+const { isEmail } = require('utils');
 
 const validateUpdateInput = ({ email = '', name = '' }) => {
-  const errors = {};
+  let error = '';
 
   if (!email) {
-    errors.email = 'Email field is required';
+    error = 'Email field is required';
   } else if (!isEmail(email)) {
-    errors.email = 'Email is invalid';
-  }
-
-  if (!name) {
-    errors.name = 'Name field is required';
+    error = 'Email is invalid';
+  } else if (!name) {
+    error = 'Name field is required';
   }
 
   return {
-    errors,
-    isValid: isEmpty(errors)
+    error,
+    isValid: error === ''
   };
 };
 
