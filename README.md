@@ -13,6 +13,14 @@ This is my pet project which allows me to test my knowledge of JavaScript and We
 
 ## Setup & Running
 
+## Setup
+
+You must set the following environment variables (or create `.env` in the root of this project):
+
+- SERVER_PORT
+- MONGO_DB
+- CHATROOM_SECRET
+
 ### Install
 
 `npm install`

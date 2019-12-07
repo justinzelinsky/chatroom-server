@@ -2,6 +2,7 @@
 
 const bodyParser = require('body-parser');
 const connectMongo = require('connect-mongo');
+const dotenv = require('dotenv');
 const express = require('express');
 const expressSession = require('express-session');
 const http = require('http');
@@ -15,7 +16,8 @@ const { loggerMiddleware } = require('middleware');
 const { messages, users } = require('routes');
 const initializeWebsocketServer = require('websocket');
 
-const PORT = process.env.PORT || 8083;
+dotenv.config();
+
 const app = express();
 const httpServer = http.Server(app);
 const MongoStore = connectMongo(expressSession);
@@ -30,7 +32,7 @@ mongoose
     useUnifiedTopology: true
   })
   .then(() => console.log('MongoDB successfully connected'))
-  .catch(err => console.log(err));
+  .catch(err => console.error(err));
 const mongooseConnection = mongoose.connection;
 
 const User = mongoose.model('users');
@@ -49,6 +51,7 @@ passport.use(
 if (process.env.DEV) {
   app.use(loggerMiddleware);
 }
+
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -69,4 +72,6 @@ app.use(passport.initialize());
 app.use('/api/users', users);
 app.use('/api/messages', messages);
 
-httpServer.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+httpServer.listen(process.env.SERVER_PORT, () =>
+  console.log(`Chatroom server listening on :${process.env.SERVER_PORT}`)
+);
