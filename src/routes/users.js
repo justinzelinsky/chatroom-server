@@ -3,6 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
+const { userAuthMiddleware } = require('middleware');
 const { User } = require('models');
 const TokenService = require('tokenService');
 const {
@@ -13,70 +14,64 @@ const {
 
 const router = express.Router();
 
-router.get(
-  '/',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    User.find({}).then(users => {
-      const cleanUsers = users.map(({ name, email, _id }) => ({
-        name,
-        email,
-        id: _id
-      }));
-      res.json(cleanUsers);
-    });
+router.get('/', userAuthMiddleware, async (req, res) => {
+  const users = await User.find({});
+  const cleanUsers = users.map(({ name, email, _id }) => ({
+    name,
+    email,
+    id: _id
+  }));
+  res.json(cleanUsers);
+});
+
+router.post('/update', userAuthMiddleware, async (req, res) => {
+  const { error, isValid } = validateUpdateInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json({ error });
   }
-);
 
-router.post(
-  '/update',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { error, isValid } = validateUpdateInput(req.body);
+  const { email, name } = req.body;
+  const userUpdateFields = {};
+  if (email) {
+    userUpdateFields.email = email;
+  }
+  if (name) {
+    userUpdateFields.name = name;
+  }
 
-    if (!isValid) {
-      return res.status(400).json({ error });
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    userUpdateFields,
+    {
+      new: true
     }
+  );
 
-    const { email, name } = req.body;
-    const userUpdateFields = {};
-    if (email) {
-      userUpdateFields.email = email;
-    }
-    if (name) {
-      userUpdateFields.name = name;
-    }
-    const id = req.user.id;
-    User.findOneAndUpdate({ _id: id }, userUpdateFields, { new: true }).then(
-      user => {
-        const payload = {
-          admin: user.admin,
-          email: user.email,
-          id: user.id,
-          name: user.name
-        };
+  const payload = {
+    admin: user.admin,
+    email: user.email,
+    id: user.id,
+    name: user.name
+  };
 
-        jwt.sign(
-          payload,
-          process.env.CHATROOM_SECRET,
-          {
-            expiresIn: 31556926
-          },
-          (err, token) => {
-            if (err) {
-              res.status(500).json(err);
-            }
-            res.json({
-              success: true,
-              token: `Bearer ${token}`
-            });
-            TokenService.setToken(user.id, token);
-          }
-        );
+  jwt.sign(
+    payload,
+    process.env.CHATROOM_SECRET,
+    {
+      expiresIn: '1h'
+    },
+    (err, token) => {
+      if (err) {
+        return res.status(500).json(err);
       }
-    );
-  }
-);
+      res.json({
+        success: true,
+        token: `Bearer ${token}`
+      });
+    }
+  );
+});
 
 router.post('/register', (req, res) => {
   const { error, isValid } = validateRegisterInput(req.body);
@@ -111,58 +106,55 @@ router.post('/register', (req, res) => {
   });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { error, isValid } = validateLoginInput(req.body);
   if (!isValid) {
     return res.status(400).json({ error });
   }
+
   const { email, password } = req.body;
 
-  User.findOne({ email }).then(user => {
-    if (!user) {
-      return res.status(404).json({ error: 'Email not found' });
-    }
+  const user = await User.findOne({ email });
 
-    bcrypt.compare(password, user.password).then(isMatch => {
-      if (isMatch) {
-        const payload = {
-          admin: user.admin,
-          email: user.email,
-          id: user.id,
-          name: user.name
-        };
+  if (!user) {
+    return res.status(404).json({ error: 'Email not found' });
+  }
 
-        jwt.sign(
-          payload,
-          process.env.CHATROOM_SECRET,
-          {
-            expiresIn: 31556926
-          },
-          (err, token) => {
-            if (err) {
-              return res.sendStatus(500);
-            }
-            res.json({
-              success: true,
-              token: `Bearer ${token}`
-            });
-            TokenService.setToken(user.id, token);
-          }
-        );
-      } else {
-        return res.status(400).json({ error: 'Password incorrect' });
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (isMatch) {
+    const payload = {
+      admin: user.admin,
+      email: user.email,
+      id: user.id,
+      name: user.name
+    };
+
+    jwt.sign(
+      payload,
+      process.env.CHATROOM_SECRET,
+      {
+        expiresIn: '1h'
+      },
+      (err, token) => {
+        if (err) {
+          return res.sendStatus(500);
+        }
+        res.json({
+          success: true,
+          token: `Bearer ${token}`
+        });
       }
-    });
-  });
+    );
+  } else {
+    return res.status(400).json({ error: 'Incorrect Password' });
+  }
 });
 
-router.get(
-  '/logout',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res, next) => {
-    await TokenService.deleteToken(req.user.id);
-    res.json({ logout: true });
-  }
-);
+router.get('/logout', userAuthMiddleware, async (req, res, next) => {
+  const token = req.headers['Authorization'].split(' ')[0];
+  await TokenService.revokeUserToken(req.user.id, token);
+  res.json({ logout: true });
+});
 
 module.exports = router;

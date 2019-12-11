@@ -10,8 +10,12 @@ const { ExtractJwt, Strategy } = require('passport-jwt');
 const path = require('path');
 const socketIO = require('socket.io');
 
-const { loggerMiddleware } = require('middleware');
-const { messages, users } = require('routes');
+const {
+  errorMiddleware,
+  loggerMiddleware,
+  userAuthMiddleware
+} = require('middleware');
+const { messages, ping, users } = require('routes');
 const TokenServide = require('tokenService');
 const initializeWebsocketServer = require('websocket');
 
@@ -37,11 +41,14 @@ const opts = {
 };
 passport.use(
   new Strategy(opts, async ({ id }, done) => {
-    const hasValidToken = await TokenServide.hasValidToken(id);
-    if (hasValidToken) {
-      User.findById(id)
-        .then(user => done(null, user || false))
-        .catch(err => done(err, false));
+    const isRevokedToken = await TokenServide.isRevokedToken(id);
+    if (!isRevokedToken) {
+      try {
+        const user = await User.findById(id);
+        done(null, user || false);
+      } catch (err) {
+        done(err, false);
+      }
     } else {
       done(null, false);
     }
@@ -59,13 +66,12 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use(
-  '/api/ping',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => res.json({ pong: true })
-);
+
+app.use('/api/ping', ping);
 app.use('/api/users', users);
 app.use('/api/messages', messages);
+
+app.use(errorMiddleware);
 
 httpServer.listen(process.env.SERVER_PORT, () =>
   console.log(`Chatroom server listening on :${process.env.SERVER_PORT}`)

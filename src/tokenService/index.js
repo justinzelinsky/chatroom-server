@@ -1,6 +1,6 @@
 const Redis = require('ioredis');
 
-const ONE_DAY = 10; //60 * 60 * 24;
+const ONE_HOUR = 60 * 60;
 
 class TokenService {
   constructor() {
@@ -10,21 +10,16 @@ class TokenService {
     console.log(`Connected to Redis at ${redisHost}:${redisPort}`);
   }
 
-  async hasValidToken(userId) {
-    const key = `jwt-${userId}`;
-    const token = await this.client.get(key);
-    return token !== null;
+  async isRevokedToken(token) {
+    const key = `jwt-${token}`;
+    const isRevoked = await this.client.get(key);
+    return isRevoked;
   }
 
-  async setToken(userId, token) {
-    const key = `jwt-${userId}`;
-    await this.client.set(key, token);
-    await this.client.expire(key, ONE_DAY);
-  }
-
-  async deleteToken(userId) {
-    const key = `jwt-${userId}`;
-    return await this.client.del(key);
+  async revokeUserToken(token) {
+    const key = `jwt-${token}`;
+    await this.client.set(key, true);
+    await this.client.expire(key, ONE_HOUR);
   }
 }
 
