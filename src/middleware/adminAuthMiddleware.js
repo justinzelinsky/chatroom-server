@@ -1,7 +1,7 @@
 const { User } = require('models');
 
 const adminAuthMiddleware = (req, res, next) => {
-  const id = req.session.userId;
+  const id = req.user.id;
 
   if (!id) {
     return res.sendStatus(401);

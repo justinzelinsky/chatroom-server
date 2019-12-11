@@ -1,10 +1,8 @@
 'use strict';
 
 const bodyParser = require('body-parser');
-const connectMongo = require('connect-mongo');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv').config();
 const express = require('express');
-const expressSession = require('express-session');
 const http = require('http');
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -14,13 +12,11 @@ const socketIO = require('socket.io');
 
 const { loggerMiddleware } = require('middleware');
 const { messages, users } = require('routes');
+const TokenServide = require('tokenService');
 const initializeWebsocketServer = require('websocket');
-
-dotenv.config();
 
 const app = express();
 const httpServer = http.Server(app);
-const MongoStore = connectMongo(expressSession);
 
 const io = socketIO(httpServer);
 initializeWebsocketServer(io);
@@ -33,7 +29,6 @@ mongoose
   })
   .then(() => console.log('MongoDB successfully connected'))
   .catch(err => console.error(err));
-const mongooseConnection = mongoose.connection;
 
 const User = mongoose.model('users');
 const opts = {
@@ -41,10 +36,15 @@ const opts = {
   secretOrKey: process.env.CHATROOM_SECRET
 };
 passport.use(
-  new Strategy(opts, (jwt_payload, done) => {
-    User.findById(jwt_payload.id)
-      .then(user => done(null, user || false))
-      .catch(err => console.log(err));
+  new Strategy(opts, async ({ id }, done) => {
+    const hasValidToken = await TokenServide.hasValidToken(id);
+    if (hasValidToken) {
+      User.findById(id)
+        .then(user => done(null, user || false))
+        .catch(err => done(err, false));
+    } else {
+      done(null, false);
+    }
   })
 );
 
@@ -58,17 +58,12 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use(
-  expressSession({
-    secret: process.env.CHATROOM_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({
-      mongooseConnection
-    })
-  })
-);
 app.use(passport.initialize());
+app.use(
+  '/api/ping',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => res.json({ pong: true })
+);
 app.use('/api/users', users);
 app.use('/api/messages', messages);
 

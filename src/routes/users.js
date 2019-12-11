@@ -1,9 +1,10 @@
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
-const userAuthMiddleware = require('middleware/userAuthMiddleware');
 const { User } = require('models');
+const TokenService = require('tokenService');
 const {
   validateLoginInput,
   validateRegisterInput,
@@ -12,63 +13,70 @@ const {
 
 const router = express.Router();
 
-router.get('/', userAuthMiddleware, (req, res) => {
-  User.find({}).then(users => {
-    const cleanUsers = users.map(({ name, email, _id }) => ({
-      name,
-      email,
-      id: _id
-    }));
-    res.json(cleanUsers);
-  });
-});
-
-router.post('/update', userAuthMiddleware, (req, res) => {
-  const { error, isValid } = validateUpdateInput(req.body);
-
-  if (!isValid) {
-    return res.status(400).json({ error });
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.find({}).then(users => {
+      const cleanUsers = users.map(({ name, email, _id }) => ({
+        name,
+        email,
+        id: _id
+      }));
+      res.json(cleanUsers);
+    });
   }
+);
 
-  const { email, name } = req.body;
-  const userUpdateFields = {};
-  if (email) {
-    userUpdateFields.email = email;
-  }
-  if (name) {
-    userUpdateFields.name = name;
-  }
-  const id = req.session.userId;
-  User.findOneAndUpdate({ _id: id }, userUpdateFields, { new: true }).then(
-    user => {
-      const payload = {
-        admin: user.admin,
-        email: user.email,
-        id: user.id,
-        name: user.name
-      };
+router.post(
+  '/update',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { error, isValid } = validateUpdateInput(req.body);
 
-      req.session.userId = user.id;
-
-      jwt.sign(
-        payload,
-        process.env.CHATROOM_SECRET,
-        {
-          expiresIn: 31556926
-        },
-        (err, token) => {
-          if (err) {
-            res.status(500).json(err);
-          }
-          res.json({
-            success: true,
-            token: `Bearer ${token}`
-          });
-        }
-      );
+    if (!isValid) {
+      return res.status(400).json({ error });
     }
-  );
-});
+
+    const { email, name } = req.body;
+    const userUpdateFields = {};
+    if (email) {
+      userUpdateFields.email = email;
+    }
+    if (name) {
+      userUpdateFields.name = name;
+    }
+    const id = req.user.id;
+    User.findOneAndUpdate({ _id: id }, userUpdateFields, { new: true }).then(
+      user => {
+        const payload = {
+          admin: user.admin,
+          email: user.email,
+          id: user.id,
+          name: user.name
+        };
+
+        jwt.sign(
+          payload,
+          process.env.CHATROOM_SECRET,
+          {
+            expiresIn: 31556926
+          },
+          (err, token) => {
+            if (err) {
+              res.status(500).json(err);
+            }
+            res.json({
+              success: true,
+              token: `Bearer ${token}`
+            });
+            TokenService.setToken(user.id, token);
+          }
+        );
+      }
+    );
+  }
+);
 
 router.post('/register', (req, res) => {
   const { error, isValid } = validateRegisterInput(req.body);
@@ -124,8 +132,6 @@ router.post('/login', (req, res) => {
           name: user.name
         };
 
-        req.session.userId = user.id;
-
         jwt.sign(
           payload,
           process.env.CHATROOM_SECRET,
@@ -140,6 +146,7 @@ router.post('/login', (req, res) => {
               success: true,
               token: `Bearer ${token}`
             });
+            TokenService.setToken(user.id, token);
           }
         );
       } else {
@@ -149,15 +156,13 @@ router.post('/login', (req, res) => {
   });
 });
 
-router.get('/logout', (req, res, next) => {
-  if (req.session) {
-    req.session.destroy(function(err) {
-      if (err) {
-        return next(err);
-      }
-      res.json({ logout: true });
-    });
+router.get(
+  '/logout',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    await TokenService.deleteToken(req.user.id);
+    res.json({ logout: true });
   }
-});
+);
 
 module.exports = router;

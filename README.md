@@ -18,8 +18,12 @@ This is my pet project which allows me to test my knowledge of JavaScript and We
 You must set the following environment variables (or create `.env` in the root of this project):
 
 - SERVER_PORT
+- REDIS_PORT
+- REDIS_HOST
 - MONGO_DB
 - CHATROOM_SECRET
+
+You must also have Mongo and Redis running.
 
 ### Install
 
