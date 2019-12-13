@@ -1,4 +1,4 @@
-const Message = require('./Message');
+const Chat = require('./Chat');
 const User = require('./User');
 
-module.exports = { Message, User };
+module.exports = { Chat, User };

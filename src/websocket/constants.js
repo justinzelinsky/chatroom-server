@@ -1,4 +1,6 @@
 const ADD_USER = 'add user';
+const CONNECTION = 'connection';
+const DISCONNECT = 'disconnect';
 const NEW_ADMIN_CHAT = 'new admin chat';
 const NEW_CHAT = 'new chat';
 const USER_JOINED = 'user joined';
@@ -14,6 +16,8 @@ const ADMIN_USER = {
 module.exports = {
   ADD_USER,
   ADMIN_USER,
+  CONNECTION,
+  DISCONNECT,
   NEW_ADMIN_CHAT,
   NEW_CHAT,
   USER_JOINED,

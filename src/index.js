@@ -15,7 +15,7 @@ const {
   loggerMiddleware,
   userAuthMiddleware
 } = require('middleware');
-const { messages, ping, users } = require('routes');
+const { chats, ping, users } = require('routes');
 const TokenServide = require('tokenService');
 const initializeWebsocketServer = require('websocket');
 
@@ -69,7 +69,7 @@ app.use(passport.initialize());
 
 app.use('/api/ping', ping);
 app.use('/api/users', users);
-app.use('/api/messages', messages);
+app.use('/api/chats', chats);
 
 app.use(errorMiddleware);
 

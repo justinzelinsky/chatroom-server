@@ -1,18 +1,18 @@
 const express = require('express');
 const passport = require('passport');
 
-const { Message } = require('models');
+const { Chat } = require('models');
 const { adminAuthMiddleware, userAuthMiddleware } = require('middleware');
 
 const router = express.Router();
 
 router.get('/', userAuthMiddleware, async (req, res) => {
-  const messages = await Message.find({});
-  res.json(messages);
+  const chats = await Chat.find({});
+  res.json(chats);
 });
 
 router.post('/clear', userAuthMiddleware, adminAuthMiddleware, (req, res) => {
-  Message.deleteMany({}, err => {
+  Chat.deleteMany({}, err => {
     if (err) {
       return res.status(500).send(err);
     }

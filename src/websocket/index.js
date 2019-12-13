@@ -1,7 +1,9 @@
-const Message = require('models/Message');
+const Chat = require('models/Chat');
 const {
   ADD_USER,
   ADMIN_USER,
+  CONNECTION,
+  DISCONNECT,
   NEW_ADMIN_CHAT,
   NEW_CHAT,
   USER_JOINED,
@@ -11,14 +13,28 @@ const {
   USERS_TYPING
 } = require('websocket/constants');
 
+const userJoinChat = username => ({
+  isAdminChat: true,
+  message: `${username} has joined the chat.`,
+  ts: new Date().valueOf(),
+  user: ADMIN_USER
+});
+
+const userLeftChat = username => ({
+  isAdminChat: true,
+  message: `${username} has left the chat.`,
+  ts: new Date().valueOf(),
+  user: ADMIN_USER
+});
+
 const initializeWebsocketServer = io => {
   let connectedUsers = [];
   let usersTyping = [];
 
-  io.on('connection', socket => {
-    socket.on(NEW_CHAT, chat => {
-      const message = new Message(chat);
-      message.save().then(() => socket.broadcast.emit(NEW_CHAT, chat));
+  io.on(CONNECTION, socket => {
+    socket.on(NEW_CHAT, newChat => {
+      const chat = new Chat(newChat);
+      chat.save().then(() => socket.broadcast.emit(NEW_CHAT, newChat));
     });
 
     socket.on(USER_START_TYPING, user => {
@@ -37,15 +53,10 @@ const initializeWebsocketServer = io => {
 
       io.emit(USER_JOINED, connectedUsers);
 
-      socket.broadcast.emit(NEW_ADMIN_CHAT, {
-        isAdminMessage: true,
-        user: ADMIN_USER,
-        ts: new Date().valueOf(),
-        message: `${socket.user.name} has joined the chat.`
-      });
+      socket.broadcast.emit(NEW_ADMIN_CHAT, userJoinChat(socket.user.name));
     });
 
-    socket.on('disconnect', () => {
+    socket.on(DISCONNECT, () => {
       if (socket.user) {
         connectedUsers = connectedUsers.filter(
           user => user.id !== socket.user.id
@@ -53,12 +64,7 @@ const initializeWebsocketServer = io => {
 
         io.emit(USER_LEFT, connectedUsers);
 
-        socket.broadcast.emit(NEW_ADMIN_CHAT, {
-          isAdminMessage: true,
-          user: ADMIN_USER,
-          ts: new Date().valueOf(),
-          message: `${socket.user.name} has left the chat.`
-        });
+        socket.broadcast.emit(NEW_ADMIN_CHAT, userLeftChat(socket.user.name));
       }
     });
   });

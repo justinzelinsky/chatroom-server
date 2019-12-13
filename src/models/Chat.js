@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const MessageSchema = new Schema({
+const ChatSchema = new Schema({
   user: {
     type: Map,
     of: String,
@@ -15,11 +15,11 @@ const MessageSchema = new Schema({
     type: Number,
     required: true
   },
-  isAdminMessage: {
+  isAdminChat: {
     type: Boolean,
     required: true
   }
 });
-const Message = mongoose.model('messages', MessageSchema);
+const Chat = mongoose.model('chats', ChatSchema);
 
-module.exports = Message;
+module.exports = Chat;
