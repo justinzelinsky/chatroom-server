@@ -23,7 +23,17 @@ You must set the following environment variables (or create `.env` in the root o
 - MONGO_DB
 - CHATROOM_SECRET
 
-You must also have Mongo and Redis running.
+Here are some example values:
+
+```
+SERVER_PORT=8083
+REDIS_PORT=6379
+REDIS_HOST=127.0.0.1
+MONGO_DB=mongodb://127.0.0.1:27017/my-db
+CHATROOM_SECRET=my_chatroom_secret
+```
+
+You must also have Mongo and Redis installed and running.
 
 ### Install
 
@@ -33,7 +43,7 @@ You must also have Mongo and Redis running.
 
 `npm start`
 
-The server will be running on `localhost:8083`. You will need the UI codebase to use the server. You can check out that codebase [here](https://github.com/justinzelinsky/chatroom-ui).
+The server will be running on `localhost:<server_port>`. You will need the UI codebase to use the server. You can check out that codebase [here](https://github.com/justinzelinsky/chatroom-ui).
 
 ## Special Thanks
 
