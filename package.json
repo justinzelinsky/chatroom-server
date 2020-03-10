@@ -21,20 +21,20 @@
     "body-parser": "^1.18.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "ioredis": "^4.14.1",
+    "ioredis": "^4.16.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
-    "mongoose": "^5.7.12",
-    "passport": "^0.4.0",
+    "mongoose": "^5.9.4",
+    "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "eslint-plugin-jest": "^23.0.3",
-    "fetch-mock": "^8.0.0",
-    "jest": "^24.9.0",
+    "eslint-plugin-jest": "^23.8.2",
+    "fetch-mock": "^9.1.1",
+    "jest": "^25.1.0",
     "node-fetch": "^2.6.0",
-    "nodemon": "^2.0.1"
+    "nodemon": "^2.0.2"
   },
   "bugs": {
     "url": "https://github.com/justinzelinsky/chatroom-server/issues"
