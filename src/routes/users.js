@@ -14,7 +14,7 @@ const {
 
 const router = express.Router();
 
-router.get('/', userAuthMiddleware, async (req, res) => {
+router.get('/', userAuthMiddleware, async function(req, res) {
   const users = await User.find({});
   const cleanUsers = users.map(({ name, email, _id }) => ({
     name,
@@ -24,7 +24,7 @@ router.get('/', userAuthMiddleware, async (req, res) => {
   res.json(cleanUsers);
 });
 
-router.post('/update', userAuthMiddleware, async (req, res) => {
+router.post('/update', userAuthMiddleware, async function(req, res) {
   const { error, isValid } = validateUpdateInput(req.body);
 
   if (!isValid) {
@@ -61,7 +61,7 @@ router.post('/update', userAuthMiddleware, async (req, res) => {
     {
       expiresIn: '1h'
     },
-    (err, token) => {
+    function(err, token) {
       if (err) {
         return res.status(500).json(err);
       }
@@ -73,7 +73,7 @@ router.post('/update', userAuthMiddleware, async (req, res) => {
   );
 });
 
-router.post('/register', (req, res) => {
+router.post('/register', function(req, res) {
   const { error, isValid } = validateRegisterInput(req.body);
 
   if (!isValid) {
@@ -82,7 +82,7 @@ router.post('/register', (req, res) => {
 
   const { name, email, password } = req.body;
 
-  User.findOne({ email }).then(user => {
+  User.findOne({ email }).then(function(user) {
     if (user) {
       return res.status(400).json({ error: 'Email already exists' });
     }
@@ -93,9 +93,11 @@ router.post('/register', (req, res) => {
       password
     });
 
-    bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(newUser.password, salt, (err, hash) => {
-        if (err) throw err;
+    bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.hash(newUser.password, salt, function(err, hash) {
+        if (err) {
+          throw err;
+        }
         newUser.password = hash;
         newUser
           .save()
@@ -106,7 +108,7 @@ router.post('/register', (req, res) => {
   });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', async function(req, res) {
   const { error, isValid } = validateLoginInput(req.body);
   if (!isValid) {
     return res.status(400).json({ error });
@@ -136,7 +138,7 @@ router.post('/login', async (req, res) => {
       {
         expiresIn: '1h'
       },
-      (err, token) => {
+      function(err, token) {
         if (err) {
           return res.sendStatus(500);
         }
@@ -151,7 +153,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.get('/logout', userAuthMiddleware, async (req, res, next) => {
+router.get('/logout', userAuthMiddleware, async function(req, res, next) {
   const token = req.headers['Authorization'].split(' ')[0];
   await TokenService.revokeUserToken(req.user.id, token);
   res.json({ logout: true });

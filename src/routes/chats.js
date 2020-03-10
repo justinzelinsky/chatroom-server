@@ -6,12 +6,15 @@ const { adminAuthMiddleware, userAuthMiddleware } = require('middleware');
 
 const router = express.Router();
 
-router.get('/', userAuthMiddleware, async (req, res) => {
+router.get('/', userAuthMiddleware, async function(req, res) {
   const chats = await Chat.find({});
   res.json(chats);
 });
 
-router.post('/clear', userAuthMiddleware, adminAuthMiddleware, (req, res) => {
+router.post('/clear', userAuthMiddleware, adminAuthMiddleware, function(
+  req,
+  res
+) {
   Chat.deleteMany({}, err => {
     if (err) {
       return res.status(500).send(err);

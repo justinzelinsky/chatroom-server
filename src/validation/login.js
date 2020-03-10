@@ -1,6 +1,6 @@
 const { isEmail } = require('utils');
 
-const validateLoginInput = ({ email = '', password = '' }) => {
+function validateLoginInput({ email = '', password = '' }) {
   let error = '';
 
   if (!email) {
@@ -11,7 +11,10 @@ const validateLoginInput = ({ email = '', password = '' }) => {
     error = 'Password field is required';
   }
 
-  return { error, isValid: error === '' };
-};
+  return {
+    error,
+    isValid: error === ''
+  };
+}
 
 module.exports = validateLoginInput;

@@ -27,27 +27,27 @@ const userLeftChat = username => ({
   user: ADMIN_USER
 });
 
-const initializeWebsocketServer = io => {
+function initializeWebsocketServer(io) {
   let connectedUsers = [];
   let usersTyping = [];
 
-  io.on(CONNECTION, socket => {
-    socket.on(NEW_CHAT, newChat => {
+  io.on(CONNECTION, function(socket) {
+    socket.on(NEW_CHAT, function(newChat) {
       const chat = new Chat(newChat);
       chat.save().then(() => socket.broadcast.emit(NEW_CHAT, newChat));
     });
 
-    socket.on(USER_START_TYPING, user => {
+    socket.on(USER_START_TYPING, function(user) {
       usersTyping.push(user);
       socket.broadcast.emit(USERS_TYPING, usersTyping);
     });
 
-    socket.on(USER_STOP_TYPING, user => {
+    socket.on(USER_STOP_TYPING, function(user) {
       usersTyping = usersTyping.filter(typingUser => typingUser.id !== user.id);
       socket.broadcast.emit(USERS_TYPING, usersTyping);
     });
 
-    socket.on(ADD_USER, user => {
+    socket.on(ADD_USER, function(user) {
       socket.user = user;
       connectedUsers.push(user);
 
@@ -56,7 +56,7 @@ const initializeWebsocketServer = io => {
       socket.broadcast.emit(NEW_ADMIN_CHAT, userJoinChat(socket.user.name));
     });
 
-    socket.on(DISCONNECT, () => {
+    socket.on(DISCONNECT, function() {
       if (socket.user) {
         connectedUsers = connectedUsers.filter(
           user => user.id !== socket.user.id
@@ -68,6 +68,6 @@ const initializeWebsocketServer = io => {
       }
     });
   });
-};
+}
 
 module.exports = initializeWebsocketServer;

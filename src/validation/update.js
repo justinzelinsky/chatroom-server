@@ -1,6 +1,6 @@
 const { isEmail } = require('utils');
 
-const validateUpdateInput = ({ email = '', name = '' }) => {
+function validateUpdateInput({ email = '', name = '' }) {
   let error = '';
 
   if (!email) {
@@ -15,6 +15,6 @@ const validateUpdateInput = ({ email = '', name = '' }) => {
     error,
     isValid: error === ''
   };
-};
+}
 
 module.exports = validateUpdateInput;

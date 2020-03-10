@@ -1,11 +1,11 @@
 const { isEmail, isLength } = require('utils');
 
-const validateRegisterInput = ({
+function validateRegisterInput({
   name = '',
   email = '',
   password = '',
   passwordConfirmation = ''
-}) => {
+}) {
   let error = '';
 
   if (!name) {
@@ -28,6 +28,6 @@ const validateRegisterInput = ({
     error,
     isValid: error === ''
   };
-};
+}
 
 module.exports = validateRegisterInput;
