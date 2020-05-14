@@ -13,19 +13,23 @@ const {
   USERS_TYPING
 } = require('websocket/constants');
 
-const userJoinChat = username => ({
-  isAdminChat: true,
-  message: `${username} has joined the chat.`,
-  ts: new Date().valueOf(),
-  user: ADMIN_USER
-});
+function userJoinChat(username) {
+  return {
+    isAdminChat: true,
+    message: `${username} has joined the chat.`,
+    ts: new Date().valueOf(),
+    user: ADMIN_USER
+  };
+}
 
-const userLeftChat = username => ({
-  isAdminChat: true,
-  message: `${username} has left the chat.`,
-  ts: new Date().valueOf(),
-  user: ADMIN_USER
-});
+function userLeftChat(username) {
+  return {
+    isAdminChat: true,
+    message: `${username} has left the chat.`,
+    ts: new Date().valueOf(),
+    user: ADMIN_USER
+  }
+}
 
 function initializeWebsocketServer(io) {
   let connectedUsers = [];

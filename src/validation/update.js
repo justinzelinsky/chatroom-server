@@ -11,9 +11,11 @@ function validateUpdateInput({ email = '', name = '' }) {
     error = 'Name field is required';
   }
 
+  const isValid = error === '';
+
   return {
     error,
-    isValid: error === ''
+    isValid
   };
 }
 

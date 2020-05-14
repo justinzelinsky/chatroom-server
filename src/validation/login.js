@@ -11,9 +11,11 @@ function validateLoginInput({ email = '', password = '' }) {
     error = 'Password field is required';
   }
 
+  const isValid = error === '';
+
   return {
     error,
-    isValid: error === ''
+    isValid
   };
 }
 

@@ -24,9 +24,11 @@ function validateRegisterInput({
     error = 'Passwords must match';
   }
 
+  const isValid = error === '';
+
   return {
     error,
-    isValid: error === ''
+    isValid
   };
 }
 
