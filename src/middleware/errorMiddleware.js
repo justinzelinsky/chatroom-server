@@ -1,4 +1,4 @@
-function errorMiddleware(err, req, res, next) {
+function errorMiddleware (err, req, res) {
   const error = {
     name: err.name,
     message: err.message,

@@ -2,7 +2,7 @@
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function isEmail(email) {
+function isEmail (email) {
   return EMAIL_REGEX.test(email);
 }
 

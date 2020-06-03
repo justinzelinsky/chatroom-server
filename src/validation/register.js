@@ -1,6 +1,6 @@
 const { isEmail, isLength } = require('utils');
 
-function validateRegisterInput({
+function validateRegisterInput ({
   name = '',
   email = '',
   password = '',

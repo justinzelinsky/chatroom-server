@@ -1,6 +1,6 @@
 const { isEmail } = require('utils');
 
-function validateLoginInput({ email = '', password = '' }) {
+function validateLoginInput ({ email = '', password = '' }) {
   let error = '';
 
   if (!email) {

@@ -1,6 +1,6 @@
 const { isEmail } = require('utils');
 
-function validateUpdateInput({ email = '', name = '' }) {
+function validateUpdateInput ({ email = '', name = '' }) {
   let error = '';
 
   if (!email) {

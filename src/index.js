@@ -1,22 +1,21 @@
 'use strict';
 
+require('dotenv').config();
+
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { ExtractJwt, Strategy } = require('passport-jwt');
-const path = require('path');
 const socketIO = require('socket.io');
 
 const {
   errorMiddleware,
-  loggerMiddleware,
-  userAuthMiddleware
+  loggerMiddleware
 } = require('middleware');
 const { chats, ping, users } = require('routes');
-const TokenServide = require('tokenService');
+const { isTokenRevoked } = require('tokenService');
 const initializeWebsocketServer = require('websocket');
 
 const app = express();
@@ -31,7 +30,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('MongoDB successfully connected'))
+  .then(() => console.log(`Connected to MongoDB at ${process.env.MONGO_DB}`))
   .catch(err => console.error(err));
 
 const User = mongoose.model('users');
@@ -41,8 +40,8 @@ const opts = {
 };
 passport.use(
   new Strategy(opts, async ({ id }, done) => {
-    const isRevokedToken = await TokenServide.isRevokedToken(id);
-    if (!isRevokedToken) {
+    const tokenIsRevoked = await isTokenRevoked(id);
+    if (!tokenIsRevoked) {
       try {
         const user = await User.findById(id);
         done(null, user || false);
@@ -74,5 +73,5 @@ app.use('/api/chats', chats);
 app.use(errorMiddleware);
 
 httpServer.listen(process.env.SERVER_PORT, () =>
-  console.log(`Chatroom server listening on :${process.env.SERVER_PORT}`)
+  console.log(`Started server at 127.0.0.1:${process.env.SERVER_PORT}`)
 );

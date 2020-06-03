@@ -1,5 +1,4 @@
 const express = require('express');
-
 const { userAuthMiddleware } = require('middleware');
 
 const router = express.Router();

@@ -1,4 +1,4 @@
-function loggerMiddleware(req, res, next) {
+function loggerMiddleware (req, res, next) {
   console.log(`[${new Date().toLocaleString()}]: Requesting ${req.path}`);
   next();
 }
