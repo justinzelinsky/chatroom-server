@@ -87,7 +87,7 @@ function initializeWebsocketServer (io) {
     socket.on(USER_START_TYPING, handleUserStartTyping(socket));
     socket.on(USER_STOP_TYPING, handleUserStopTyping(socket));
     socket.on(ADD_USER, handleAddUser(io, socket));
-    socket.on(DISCONNECT, handleDisconnect());
+    socket.on(DISCONNECT, handleDisconnect(io, socket));
   });
 }
 
