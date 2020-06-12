@@ -3,8 +3,12 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { userAuthMiddleware } = require('middleware');
 const { User } = require('models');
-const { revokeUserToken } = require('tokenService');
-const { validateLoginInput, validateRegisterInput, validateUpdateInput } = require('validation');
+const { revokeUserToken, setUserToken } = require('tokenService');
+const {
+  validateLoginInput,
+  validateRegisterInput,
+  validateUpdateInput,
+} = require('validation');
 
 const router = express.Router();
 const CHATROOM_SECRET = process.env.CHATROOM_SECRET;
@@ -37,11 +41,11 @@ router.post('/update', userAuthMiddleware, async function (req, res) {
 
   const user = await User.findOneAndUpdate(
     {
-      _id: req.user.id
+      _id: req.user.id,
     },
     userUpdateFields,
     {
-      new: true
+      new: true,
     }
   );
 
@@ -49,14 +53,14 @@ router.post('/update', userAuthMiddleware, async function (req, res) {
     admin: user.admin,
     email: user.email,
     id: user.id,
-    name: user.name
+    name: user.name,
   };
 
   jwt.sign(
     payload,
     CHATROOM_SECRET,
     {
-      expiresIn: '1h'
+      expiresIn: '1h',
     },
     function (err, token) {
       if (err) {
@@ -64,7 +68,7 @@ router.post('/update', userAuthMiddleware, async function (req, res) {
       }
       res.json({
         success: true,
-        token: `Bearer ${token}`
+        token: `Bearer ${token}`,
       });
     }
   );
@@ -88,7 +92,7 @@ router.post('/register', async function (req, res) {
   const newUser = new User({
     name,
     email,
-    password
+    password,
   });
 
   try {
@@ -127,16 +131,20 @@ router.post('/login', async function (req, res) {
       admin: user.admin,
       email: user.email,
       id: user.id,
-      name: user.name
+      name: user.name,
     };
 
-    jwt.sign(payload, CHATROOM_SECRET, { expiresIn: '1h' }, function (err, token) {
+    jwt.sign(payload, CHATROOM_SECRET, { expiresIn: '1h' }, function (
+      err,
+      token
+    ) {
       if (err) {
         return res.sendStatus(500);
       }
+      setUserToken(user.id, token);
       res.json({
         success: true,
-        token: `Bearer ${token}`
+        token: `Bearer ${token}`,
       });
     });
   } else {

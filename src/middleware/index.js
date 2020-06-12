@@ -7,5 +7,5 @@ module.exports = {
   adminAuthMiddleware,
   errorMiddleware,
   loggerMiddleware,
-  userAuthMiddleware
+  userAuthMiddleware,
 };

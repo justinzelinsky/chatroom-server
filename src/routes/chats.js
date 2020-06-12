@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { adminAuthMiddleware, userAuthMiddleware } = require('middleware');
 const { Chat } = require('models');

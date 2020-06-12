@@ -10,12 +10,9 @@ const passport = require('passport');
 const { ExtractJwt, Strategy } = require('passport-jwt');
 const socketIO = require('socket.io');
 
-const {
-  errorMiddleware,
-  loggerMiddleware
-} = require('middleware');
+const { errorMiddleware, loggerMiddleware } = require('middleware');
 const { chats, ping, users } = require('routes');
-const { isTokenRevoked } = require('tokenService');
+const { isUserTokenRevoked } = require('tokenService');
 const initializeWebsocketServer = require('websocket');
 
 const app = express();
@@ -28,19 +25,19 @@ mongoose
   .connect(process.env.MONGO_DB, {
     useFindAndModify: false,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => console.log(`Connected to MongoDB at ${process.env.MONGO_DB}`))
-  .catch(err => console.error(err));
+  .catch((err) => console.error(err));
 
 const User = mongoose.model('users');
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.CHATROOM_SECRET
+  secretOrKey: process.env.CHATROOM_SECRET,
 };
 passport.use(
-  new Strategy(opts, async ({ id }, done) => {
-    const tokenIsRevoked = await isTokenRevoked(id);
+  new Strategy(opts, async function ({ id }, done) {
+    const tokenIsRevoked = await isUserTokenRevoked(id);
     if (!tokenIsRevoked) {
       try {
         const user = await User.findById(id);
@@ -60,7 +57,7 @@ if (process.env.DEV) {
 
 app.use(
   bodyParser.urlencoded({
-    extended: false
+    extended: false,
   })
 );
 app.use(bodyParser.json());
@@ -72,9 +69,6 @@ app.use('/api/chats', chats);
 
 app.use(errorMiddleware);
 
-httpServer.listen(
-  process.env.SERVER_PORT,
-  function () {
-    console.log(`Started server at 127.0.0.1:${process.env.SERVER_PORT}`);
-  }
-);
+httpServer.listen(process.env.SERVER_PORT, function () {
+  console.log(`Started server at 127.0.0.1:${process.env.SERVER_PORT}`);
+});

@@ -2,7 +2,7 @@ const passport = require('passport');
 
 const userAuthMiddleware = passport.authenticate('jwt', {
   failWithError: true,
-  session: false
+  session: false,
 });
 
 module.exports = userAuthMiddleware;
