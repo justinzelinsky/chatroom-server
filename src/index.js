@@ -72,6 +72,9 @@ app.use('/api/chats', chats);
 
 app.use(errorMiddleware);
 
-httpServer.listen(process.env.SERVER_PORT, () =>
-  console.log(`Started server at 127.0.0.1:${process.env.SERVER_PORT}`)
+httpServer.listen(
+  process.env.SERVER_PORT,
+  function () {
+    console.log(`Started server at 127.0.0.1:${process.env.SERVER_PORT}`);
+  }
 );

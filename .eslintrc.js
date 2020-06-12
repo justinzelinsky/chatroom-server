@@ -1,33 +1,48 @@
-const ERROR = 2;
-const OFF = 0;
-
 module.exports = {
-  env: {
-    node: true,
-    'jest/globals': true
+  'env': {
+    'browser': true,
+    'commonjs': true,
+    'es6': true,
   },
-  extends: [
+  'extends': [
     'eslint:recommended',
+    'plugin:jest/recommended',
     'plugin:node/recommended'
   ],
-  parserOptions: {
-    ecmaVersion: 2018
+  'parserOptions': {
+    'ecmaVersion': 11
   },
-  plugins: [
+  'plugins': [
     'jest'
   ],
-  rules: {
+  'rules': {
+    'indent': [
+      'error',
+      2
+    ],
+    'linebreak-style': [
+      'error',
+      'unix'
+    ],
+    'quotes': [
+      'error',
+      'single'
+    ],
+    'semi': [
+      'error',
+      'always'
+    ],
     'space-before-function-paren': ['error', 'always'],
-    'keyword-spacing': ERROR,
-    'no-trailing-spaces': ERROR,
-    indent: [ERROR, 2, { SwitchCase: 1 }],
-    'linebreak-style': [ERROR, 'unix'],
-    quotes: [ERROR, 'single'],
-    semi: [ERROR, 'always'],
-    'object-curly-spacing': [ERROR, 'always'],
-    'no-console': OFF,
-    'node/no-missing-require': [ERROR, {
-      resolvePaths: ['./src/']
-    }]
+    'keyword-spacing': 'error',
+    'no-trailing-spaces': 'error',
+    'object-curly-spacing': ['error', 'always'],
+    'node/no-missing-require': [
+      'error',
+      {
+        resolvePaths: [
+          './src'
+        ]
+      }
+    ]
   }
 };

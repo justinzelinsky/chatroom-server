@@ -1,38 +1,22 @@
 const Chat = require('models/Chat');
-const {
-  ADD_USER,
-  ADMIN_USER,
-  CONNECTION,
-  DISCONNECT,
-  NEW_ADMIN_CHAT,
-  NEW_CHAT,
-  USER_JOINED,
-  USER_LEFT,
-  USER_START_TYPING,
-  USER_STOP_TYPING,
-  USERS_TYPING
-} = require('websocket/constants');
+
+const ADD_USER = 'add user';
+const CONNECTION = 'connection';
+const DISCONNECT = 'disconnect';
+const NEW_ADMIN_CHAT = 'new admin chat';
+const NEW_CHAT = 'new chat';
+const USER_JOINED = 'user joined';
+const USER_LEFT = 'user left';
+const USER_START_TYPING = 'user start typing';
+const USER_STOP_TYPING = 'user stop typing';
+const USERS_TYPING = 'users typing';
+
+const ADMIN_USER = {
+  name: 'Admin'
+};
 
 let connectedUsers = [];
 let usersTyping = [];
-
-function userJoinChat (username) {
-  return {
-    isAdminChat: true,
-    message: `${username} has joined the chat.`,
-    ts: new Date().valueOf(),
-    user: ADMIN_USER
-  };
-}
-
-function userLeftChat (username) {
-  return {
-    isAdminChat: true,
-    message: `${username} has left the chat.`,
-    ts: new Date().valueOf(),
-    user: ADMIN_USER
-  };
-}
 
 function handleNewChat (socket) {
   return async function (newChat) {
@@ -57,6 +41,15 @@ function handleUserStopTyping (socket) {
 }
 
 function handleAddUser (io, socket) {
+  function userJoinChat (username) {
+    return {
+      isAdminChat: true,
+      message: `${username} has joined the chat.`,
+      ts: new Date().valueOf(),
+      user: ADMIN_USER
+    };
+  }
+
   return function (user) {
     socket.user = user;
     connectedUsers.push(user);
@@ -68,6 +61,15 @@ function handleAddUser (io, socket) {
 }
 
 function handleDisconnect (io, socket) {
+  function userLeftChat (username) {
+    return {
+      isAdminChat: true,
+      message: `${username} has left the chat.`,
+      ts: new Date().valueOf(),
+      user: ADMIN_USER
+    };
+  }
+
   return function () {
     if (socket.user) {
       connectedUsers = connectedUsers.filter(
