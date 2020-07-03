@@ -3,7 +3,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const { userAuthMiddleware } = require('middleware');
 const { User } = require('models');
-const { revokeUserToken, setUserToken } = require('tokenService');
 const {
   validateLoginInput,
   validateRegisterInput,
@@ -141,7 +140,7 @@ router.post('/login', async function (req, res) {
       if (err) {
         return res.sendStatus(500);
       }
-      setUserToken(user.id, token);
+
       res.json({
         success: true,
         token: `Bearer ${token}`,
@@ -153,8 +152,6 @@ router.post('/login', async function (req, res) {
 });
 
 router.get('/logout', userAuthMiddleware, async function (req, res) {
-  const token = req.headers['authorization'].split(' ')[0];
-  await revokeUserToken(req.user.id, token);
   res.json({ logout: true });
 });
 

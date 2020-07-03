@@ -9,6 +9,7 @@ async function adminAuthMiddleware (req, res, next) {
 
   try {
     const user = await User.findById(id);
+
     if (user.admin) {
       next();
     } else {

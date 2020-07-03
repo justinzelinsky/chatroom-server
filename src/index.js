@@ -12,7 +12,6 @@ const socketIO = require('socket.io');
 
 const { errorMiddleware, loggerMiddleware } = require('middleware');
 const { chats, ping, users } = require('routes');
-const { isUserTokenRevoked } = require('tokenService');
 const initializeWebsocketServer = require('websocket');
 
 const app = express();
@@ -37,16 +36,11 @@ const opts = {
 };
 passport.use(
   new Strategy(opts, async function ({ id }, done) {
-    const tokenIsRevoked = await isUserTokenRevoked(id);
-    if (!tokenIsRevoked) {
-      try {
-        const user = await User.findById(id);
-        done(null, user || false);
-      } catch (err) {
-        done(err, false);
-      }
-    } else {
-      done(null, false);
+    try {
+      const user = await User.findById(id);
+      done(null, user || false);
+    } catch (err) {
+      done(err, false);
     }
   })
 );

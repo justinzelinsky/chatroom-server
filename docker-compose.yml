@@ -6,8 +6,6 @@ services:
     environment:
       - MONGO_DB=mongodb://mongo:27017/my-db
       - CHATROOM_SECRET=${CHATROOM_SECRET}
-      - REDIS_PORT=6379
-      - REDIS_HOST=redis://chatroom-server-redis
       - SERVER_PORT=8083
     volumes:
       - .:/usr/src/app
@@ -21,10 +19,5 @@ services:
       - 27017:27017
     volumes:
       - data-volume:/data/db
-  redis:
-    container_name: chatroom-server-redis
-    image: redis
-    expose:
-      - 6379
 volumes:
   data-volume:
