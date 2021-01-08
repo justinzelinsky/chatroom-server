@@ -3,6 +3,8 @@ const { userAuthMiddleware } = require('middleware');
 
 const router = express.Router();
 
-router.get('/', userAuthMiddleware, (req, res) => res.json({ pong: true }));
+router.get('/', userAuthMiddleware, function (req, res) {
+  res.json({ pong: true });
+});
 
 module.exports = router;
