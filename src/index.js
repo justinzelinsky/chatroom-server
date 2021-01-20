@@ -17,7 +17,12 @@ const initializeWebsocketServer = require('websocket');
 const app = express();
 const httpServer = http.Server(app);
 
-const io = socketIO(httpServer);
+const io = socketIO(httpServer, {
+  cors: {
+    origin: 'https://0.0.0.0:9000',
+    methods: ['GET', 'POST']
+  }
+});
 initializeWebsocketServer(io);
 
 mongoose
