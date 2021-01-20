@@ -18,8 +18,6 @@ This is my pet project which allows me to test my knowledge of JavaScript and We
 You must set the following environment variables (or create `.env` in the root of this project):
 
 - SERVER_PORT
-- REDIS_PORT
-- REDIS_HOST
 - MONGO_DB
 - CHATROOM_SECRET
 
@@ -27,8 +25,6 @@ Here are some example values:
 
 ```
 SERVER_PORT=8083
-REDIS_PORT=6379
-REDIS_HOST=127.0.0.1
 MONGO_DB=mongodb://127.0.0.1:27017/my-db
 CHATROOM_SECRET=my_chatroom_secret
 ```
