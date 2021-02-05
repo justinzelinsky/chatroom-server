@@ -21,7 +21,7 @@ const io = socketIO(httpServer, {
   cors: {
     origin: [
       'https://0.0.0.0:9000',
-      'https://localhost:8082',
+      'http://localhost:8082',
       /\.ngrok\.io$/
     ],
     methods: ['GET', 'POST']
